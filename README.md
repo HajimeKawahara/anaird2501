@@ -1,5 +1,6 @@
 # anaird2501
-reproducible analysis code for IRD/Subaru using pyird
+- reproducible analysis code for IRD/Subaru using pyird
+- total checks for pyird v1.1
 
 directory structure
 
