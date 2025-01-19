@@ -49,7 +49,7 @@ flat.band = band
 # aperture extraction
 if band == "h" and flat.fitsid[0] % 2 == 0:
     flat.fitsid_increment()
-    trace_mmf = flat.aptrace(cutrow=1200, nap=21)
+    trace_mmf = flat.aptrace(cutrow=1500, nap=21)
 elif band == "y":
     trace_mmf = flat.aptrace(cutrow=1000, nap=51)
 
