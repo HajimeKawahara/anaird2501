@@ -56,9 +56,6 @@ elif band == "y":
 # trace mask
 trace_mask = trace_mmf.mask()
 
-# trace
-trace_mmf.choose_mmf2_aperture()
-
 from pyird.image.bias import bias_subtract_image
 from pyird.image.hotpix import identify_hotpix_sigclip
 
