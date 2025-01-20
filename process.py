@@ -44,12 +44,9 @@ fitsid_target["day3"] = list(range(76240, 76268, 2))
 ## aperture extraction
 from pyird.utils import irdstream
 
-flat = irdstream.Stream2D("flat", datadir_flat, anadir)
-flat.fitsid = fitsid_flat
-flat.band = band
+flat = irdstream.Stream2D("flat", datadir_flat, anadir, fitsid=fitsid_flat, band=band)
 
-if band == "h" and flat.fitsid[0] % 2 == 0:
-    flat.fitsid_increment()
+if band == "h":
     trace_mmf = flat.aptrace(cutrow=1500, nap=21)
 elif band == "y":
     trace_mmf = flat.aptrace(cutrow=1000, nap=51)
@@ -66,10 +63,8 @@ if band == "h":
 elif band == "y":
     rawtag = "IRDBD000"
 dark = irdstream.Stream2D(
-    "dark", datadir_dark[band], anadir, fitsid=fitsid_dark, rawtag=rawtag
+    "dark", datadir_dark[band], anadir, fitsid=fitsid_dark, rawtag=rawtag, band=band
 )
-if band == "h" and dark.fitsid[0] % 2 == 0:
-    dark.fitsid_increment()
 median_image = dark.immedian()
 im_subbias = bias_subtract_image(median_image)
 hotpix_mask = identify_hotpix_sigclip(im_subbias)
@@ -78,10 +73,7 @@ hotpix_mask = identify_hotpix_sigclip(im_subbias)
 thar = {}
 for day in dayarr:
     thar[day] = irdstream.Stream2D(
-        "thar_" + str(day),
-        datadir[day],
-        anadir,
-        fitsid=fitsid_thar[day],
+        "thar_" + str(day), datadir[day], anadir, fitsid=fitsid_thar[day], band=band
     )
     thar[day].trace = trace_mmf
     thar[day].clean_pattern(
@@ -90,16 +82,14 @@ for day in dayarr:
     thar[day].calibrate_wavelength()
 
 ## Normalizes Flat
-flat=irdstream.Stream2D("flat_star",datadir_flat,anadir)
-flat.fitsid=fitsid_flat
+flat = irdstream.Stream2D("flat_star", datadir_flat, anadir, fitsid = fitsid_flat, band=band)
 flat.trace = trace_mmf
-flat.band=band
-if band == 'h' and flat.fitsid[0]%2==0:
-    flat.fitsid_increment()
 
 ## Removes noise pattern
-flat.clean_pattern(trace_mask=trace_mask,extin='', extout='_cp', hotpix_mask=hotpix_mask)
-flat.imcomb = True # median combine
+flat.clean_pattern(
+    trace_mask=trace_mask, extin="", extout="_cp", hotpix_mask=hotpix_mask
+)
+flat.imcomb = True  # median combine
 
 ## Extracts 1D spectrum
 flat.flatten(hotpix_mask=hotpix_mask)
@@ -113,17 +103,23 @@ target = {}
 for day in dayarr:
     print("##########", day, "##########")
     ## Settings
-    target[day] = irdstream.Stream2D('targets_'+str(day), datadir[day], anadir, fitsid=fitsid_target[day])
-    if band=='h' and target[day].fitsid[0]%2==0:
-        target[day].fitsid_increment() # when you use H-band
+    target[day] = irdstream.Stream2D(
+        "targets_" + str(day),
+        datadir[day],
+        anadir,
+        fitsid=fitsid_target[day],
+        band=band,
+    )
     target[day].info = True  # show detailed info
     target[day].trace = trace_mmf
     # removes noise pattern (makes _cp fits files)
-    target[day].clean_pattern(trace_mask=trace_mask, extin='', extout='_cp', hotpix_mask=hotpix_mask)
+    target[day].clean_pattern(
+        trace_mask=trace_mask, extin="", extout="_cp", hotpix_mask=hotpix_mask
+    )
     ## Flat fielding
     target[day].apext_flatfield(df_flatn, hotpix_mask=hotpix_mask)
-    target[day].dispcor(master_path=thar[day].anadir,extin='_flnhp')
+    target[day].dispcor(master_path=thar[day].anadir, extin="_flnhp")
 
 # Blaze function
-#flat.apext_flatfield(df_flatn,hotpix_mask=hotpix_mask)
-#flat.dispcor(master_path=thar["day1"].anadir)
+# flat.apext_flatfield(df_flatn,hotpix_mask=hotpix_mask)
+# flat.dispcor(master_path=thar["day1"].anadir)
