@@ -1,14 +1,26 @@
 import numpy as np
 import pandas as pd
 
+#h
 bkg = list(range(76249, 76269, 4))
 target = list(range(76251, 76269, 4))
 
+#y
+bkg = list(range(76248, 76268, 4))
+target = list(range(76250, 76268, 4))
+
+
 print(bkg, target)
 
-def read_wdat(tag):
-    filename= "reduction/w" + str(tag) + "_mmf12.dat"
-    dat = pd.read_csv(filename, sep=" ", names=("wavelength", "order", "flux"))
+def read_wdat(tag, head="w"):
+    #head  = "nw", "w"
+    filename= "reduction/"+ str(head) + str(tag) + "_mmf12.dat"
+    
+    if head == "nw":
+        dat = pd.read_csv(filename, sep=" ", names=("wavelength", "order", "A", "flux", "B"))
+    elif head == "w":
+        dat = pd.read_csv(filename, sep=" ", names=("wavelength", "order", "flux"))
+        
     return dat
 
 def stack_flux(fitsidset): 
@@ -22,7 +34,7 @@ def stack_flux(fitsidset):
 
 def bindata(data, bin_size=20):
     padded_data = np.pad(data, (0, bin_size - len(data) % bin_size), mode='constant')
-    binned_means = np.mean(padded_data.reshape(-1, bin_size), axis=1)
+    binned_means = np.nanmean(padded_data.reshape(-1, bin_size), axis=1)
     return binned_means
 
 if __name__ == "__main__":

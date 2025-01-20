@@ -9,7 +9,7 @@ basedir = pathlib.Path("~/subaru/202501").expanduser()
 datadir_flat = basedir / "data/20250114/"
 datadir_dark = {}
 datadir_dark["h"] = basedir / "data/Kawahara20250113/dark/H-band"
-datadir_dark["yj"] = basedir / "data/Kawahara20250113/dark/YJ-band"
+datadir_dark["y"] = basedir / "data/Kawahara20250113/dark/YJ-band"
 
 
 dayarr = ["day1", "day2", "day3"]
@@ -20,7 +20,7 @@ datadir["day3"] = basedir / "data/20250116/"
 
 anadir = basedir / "anaird2501/reduction/"
 
-band = "h"  #'h' or 'y'
+band = "y"  #'h' or 'y'
 mmf = "mmf2"  #'mmf1' (comb fiber) or 'mmf2' (star fiber)
 readout_noise_mode = "default"
 
@@ -121,5 +121,9 @@ for day in dayarr:
     target[day].dispcor(master_path=thar[day].anadir, extin="_flnhp")
 
 # Blaze function
-# flat.apext_flatfield(df_flatn,hotpix_mask=hotpix_mask)
-# flat.dispcor(master_path=thar["day1"].anadir)
+flat.apext_flatfield(df_flatn,hotpix_mask=hotpix_mask)
+flat.dispcor(master_path=thar["day1"].anadir)
+
+# Normalizes the target spectrum
+for day in dayarr:
+    target[day].normalize1D(master_path=flat.anadir,readout_noise_mode=readout_noise_mode)
