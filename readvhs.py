@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-band = "y"
+band = "h"
 iband = {"h":1, "y":0}
 i = iband[band] # h=1, y=0 
 
@@ -18,7 +18,7 @@ target = target2 + target3
 
 print(bkg, target)
 
-def read_wdat(tag, head="w"):
+def read_wdat(tag, head="nw"):
     #head  = "nw", "w"
     filename= "reduction/"+ str(head) + str(tag) + "_mmf12.dat"
     
@@ -38,7 +38,7 @@ def stack_flux(fitsidset):
             flux += dat["flux"]
     return np.array(dat["wavelength"]), np.array(flux)
 
-def bindata(data, bin_size=30):
+def bindata(data, bin_size=2):
     padded_data = np.pad(data, (0, bin_size - len(data) % bin_size), mode='constant')
     binned_means = np.nanmedian(padded_data.reshape(-1, bin_size), axis=1)
     return binned_means
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     w0 = w[0]
     w1 = w[-1]
 
-    binning = True
+    binning = False
     if binning:
         w = bindata(w)
         fbkg = bindata(fbkg)
@@ -75,7 +75,8 @@ if __name__ == "__main__":
     ax.set_xlim(w0,w1)
     plt.legend()
     ax = fig.add_subplot(312)
-    ax.plot(w, (ftarget - fbkg)/blaze, ".", alpha=0.5, color="C2", label="difference")
+    #ax.plot(w, (ftarget - fbkg)/blaze, ".", alpha=0.5, color="C2", label="difference")
+    ax.plot(w, (ftarget - fbkg), ".", alpha=0.5, color="C2", label="difference")
     ax.set_ylim(-10, 200)
     ax.set_xlim(w0,w1)
     plt.legend()
