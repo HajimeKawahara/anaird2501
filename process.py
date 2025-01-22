@@ -20,7 +20,7 @@ datadir["day3"] = basedir / "data/20250116/"
 
 anadir = basedir / "anaird2501/reduction/"
 
-band = "h"  #'h' or 'y'
+band = "y"  #'h' or 'y'
 mmf = "mmf2"  #'mmf1' (comb fiber) or 'mmf2' (star fiber)
 readout_noise_mode = "default"
 
