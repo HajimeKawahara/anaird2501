@@ -1,5 +1,12 @@
 # uses pyird v1.1, Hajime Kawahara
 
+#select y or h
+band = "y"  #'h' or 'y'
+
+#if you do not want to show plots, please comment out the following lines
+#import matplotlib
+#matplotlib.use("Agg")
+
 import pathlib
 
 # STEP 0 Settings
@@ -20,7 +27,6 @@ datadir["day3"] = basedir / "data/20250116/"
 
 anadir = basedir / "anaird2501/reduction/"
 
-band = "y"  #'h' or 'y'
 mmf = "mmf2"  #'mmf1' (comb fiber) or 'mmf2' (star fiber)
 readout_noise_mode = "default"
 
